@@ -28,6 +28,6 @@ options:
   --height HEIGHT       Το συνολικό ύψος του STL μοντέλου
 ```
 
-## License/ Άδεια χρήσης
+## License / Άδεια χρήσης
 
 MIT
