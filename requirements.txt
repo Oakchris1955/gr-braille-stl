@@ -1,0 +1,15 @@
+arrex==0.5.2
+glcontext==3.0.0
+moderngl==5.12.0
+numpy==2.2.3
+numpy-stl==3.2.0
+pillow==11.1.0
+pyglm==2.8.0
+pymadcad==0.18.1
+PyQt5==5.15.11
+PyQt5-Qt5==5.15.16
+PyQt5_sip==12.17.0
+python-utils==3.9.1
+PyYAML==6.0.2
+scipy==1.15.2
+typing_extensions==4.12.2
