@@ -11,6 +11,23 @@
 
 ## Usage / Χρήση
 
+```txt
+$ python3 src/main.py  --help
+usage: GRBrailleSTL [-h] [-r RADIUS] [--height HEIGHT] text dest
+
+Ένα απλό πρόγραμμα μετατροπής κειμένου σε κώδικα Μπράιγ σε STL
+
+positional arguments:
+  text                  Το κείμενο που θέλετε να μεταφραστεί
+  dest                  Η τοποθεσία του αρχείου εξόδου
+
+options:
+  -h, --help            show this help message and exit
+  -r RADIUS, --radius RADIUS
+                        Η ακτίνα των κουκίδων
+  --height HEIGHT       Το συνολικό ύψος του STL μοντέλου
+```
+
 ## License/ Άδεια χρήσης
 
 MIT
