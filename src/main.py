@@ -20,7 +20,7 @@ def main():
 
     args = parser.parse_args()
 
-    s = text_to_braille(args.text)
+    s = [text_to_braille(t) for t in args.text.split(("\n"))]
     braille_to_stl(s, CADParams.from_radius_and_height(args.radius, args.height), args.dest)
 
 if __name__ == "__main__":
