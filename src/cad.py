@@ -1,5 +1,5 @@
-import madcad
 from typing import List
+import build123d as bd
 
 from braille_symbol import BrailleSymbol
 
@@ -32,38 +32,31 @@ class CADParams:
 def braille_to_stl(symbols: List[BrailleSymbol], params: CADParams, dest_file: str):
     total_width = len(symbols) * params.symbol_width()
 
-    base = madcad.generation.brick(
-        madcad.vec3(0, 0, 0),
-        madcad.vec3(total_width, params.symbol_length(), params.cell_height)
-    )
+    # the coordinates we give are the center of the box, but we want one edge to be at the axis origin
+    base = bd.Pos(total_width / 2, params.symbol_length() / 2, params.cell_height / 2) * bd.Box(total_width, params.symbol_length(), params.cell_height)
 
+    dot_cylinder = bd.extrude(bd.Circle(params.dot_radius), params.symbol_height())
 
-    axis = madcad.Axis(madcad.O, madcad.Z)
-    dot_circle = madcad.Circle(axis, params.dot_radius)
-    mesh_circle = madcad.flatsurface(dot_circle)
-    mesh_circle = madcad.extrusion(mesh_circle, madcad.Z * params.symbol_height())
-    mesh_circle = mesh_circle.transform(madcad.translate(madcad.vec3(params.cell_width / 2, params.cell_width / 2, 0))).flip()
+    dots = bd.Part()
 
-    # an empty mesh
-    dots = madcad.Mesh()
-
-    symbol_pos = madcad.vec3(0, 0, 0)
+    symbol_pos = bd.Vector(params.cell_width / 2, params.cell_width / 2, 0)
 
     for symbol in symbols:
         for i, dot in enumerate(symbol.dots):
             if dot:
-                current_dot = mesh_circle.transform(madcad.translate(symbol_pos))
-                dots = dots + current_dot
+                dots += bd.copy_module.copy(dot_cylinder).locate(bd.Pos(symbol_pos))
 
-            symbol_pos += madcad.Y * params.cell_width
+            symbol_pos.Y += params.cell_width
 
             if (i+1) % 3 == 0:
-                symbol_pos -= madcad.Y * params.cell_width * 3
-                symbol_pos += madcad.X * params.cell_width
+                symbol_pos.Y -= params.cell_width * 3
+                symbol_pos.X += params.cell_width
 
-    out = base + dots
-    out = out.transform(madcad.scale(madcad.vec3(1, -1, 1))).flip()
-    out.mergeclose()
+    # we also need to flip the entire thing
+    out = bd.scale(base + dots, (1, -1, 1))
 
-    madcad.io.write(out, dest_file)
+    exporter = bd.Mesher()
+    # this make this script a bit quicker and reduces the file size too
+    exporter.add_shape(out, angular_deflection=1)
+    exporter.write(dest_file)
 
