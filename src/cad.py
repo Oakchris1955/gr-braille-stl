@@ -29,6 +29,9 @@ class CADParams:
         return self.dot_height + self.cell_height
 
 
+#def _generate_dots(symbols: List[BrailleSymbol], params: CADParams) -> bd.Part:
+
+
 def braille_to_stl(symbols: List[BrailleSymbol], params: CADParams, dest_file: str):
     total_width = len(symbols) * params.symbol_width()
 
@@ -39,21 +42,20 @@ def braille_to_stl(symbols: List[BrailleSymbol], params: CADParams, dest_file: s
 
     dots = bd.Part()
 
-    symbol_pos = bd.Vector(params.cell_width / 2, params.cell_width / 2, 0)
+    symbol_pos = bd.Vector(+params.cell_width / 2, -params.cell_width / 2 + params.cell_width * 3, 0)
 
     for symbol in symbols:
         for i, dot in enumerate(symbol.dots):
             if dot:
                 dots += bd.copy_module.copy(dot_cylinder).locate(bd.Pos(symbol_pos))
 
-            symbol_pos.Y += params.cell_width
+            symbol_pos.Y -= params.cell_width
 
             if (i+1) % 3 == 0:
-                symbol_pos.Y -= params.cell_width * 3
+                symbol_pos.Y += params.cell_width * 3
                 symbol_pos.X += params.cell_width
 
-    # we also need to flip the entire thing
-    out = bd.scale(base + dots, (1, -1, 1))
+    out = base + dots
 
     exporter = bd.Mesher()
     # this make this script a bit quicker and reduces the file size too
