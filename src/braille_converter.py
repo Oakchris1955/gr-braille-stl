@@ -18,8 +18,10 @@ def text_to_braille(text: str) -> List[BrailleSymbol]:
 
     normalized_text = unicodedata.normalize("NFD", text)
 
-    if not all(c in chars for c in normalized_text.lower()):
-        raise UnsupportedCharacter
+    for c in normalized_text.lower():
+        if c not in chars:
+            print(f"UnsupportedCharacter \"{c}\"")
+            raise UnsupportedCharacter
 
     def move_elements_back(lst, element):
         """Move all occurrences of the specified element back by one position in the list."""
@@ -47,7 +49,7 @@ def text_to_braille(text: str) -> List[BrailleSymbol]:
             continue
 
         # special handling for double vowels
-        if c.lower() in set(map(lambda x: x[0], gr.entries["double_vowels"].keys())):
+        if c.lower() in set(map(lambda x: x[0], gr.entries["double_vowels"].keys())) and (i+1) != len(normalized_text):
             next_c = normalized_text[i+1].lower()
             double_letter = f"{c.lower()}{next_c}"
             if double_letter in gr.entries["double_vowels"]:
