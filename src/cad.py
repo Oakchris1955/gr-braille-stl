@@ -54,6 +54,8 @@ def _generate_base(params: CADParams, width: int, rows: int) -> bd.Part:
     return bd.Box(width * params.symbol_width(), rows * params.symbol_length(), params.cell_height, align=bd.Align.MIN)
 
 def braille_to_stl(symbols: List[List[BrailleSymbol]], params: CADParams, dest_file: str):
+    print("Generating mesh...")
+
     rows = len(symbols)
     width = max(len(s) for s in symbols)
 
@@ -65,10 +67,12 @@ def braille_to_stl(symbols: List[List[BrailleSymbol]], params: CADParams, dest_f
         current_row.position += (0, (rows - i - 1) * params.symbol_length(), 0)
         dots += current_row
 
+    print("Finalizing mesh (this may take a while)...")
+
     out = base + dots
 
     exporter = bd.Mesher()
     # this make this script a bit quicker and reduces the file size too
-    exporter.add_shape(out, angular_deflection=1)
+    exporter.add_shape(out, angular_deflection=10)
     exporter.write(dest_file)
 
