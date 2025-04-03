@@ -30,7 +30,7 @@ class CADParams:
 
 
 def _generate_dots(symbols: List[BrailleSymbol], params: CADParams) -> bd.Part:
-    dot_cylinder = bd.Cylinder(params.dot_radius, params.symbol_height())
+    dot_cylinder = bd.Cylinder(params.dot_radius, params.symbol_height(), align=bd.Align.MIN)
 
     dots = bd.Part()
 
