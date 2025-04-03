@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import build123d as bd
 
 from braille_symbol import BrailleSymbol
@@ -31,7 +31,25 @@ def _generate_base(width: int, rows: int) -> bd.Part:
     # the coordinates we give are the center of the box, but we want one edge to be at the axis origin
     return bd.Box(width * CONSTS.CELL_HORIZONTAL_DISTANCE, rows * CONSTS.CELL_VERTICAL_DISTANCE, CONSTS.DOT_HEIGHT, align=bd.Align.MIN)
 
-def braille_to_stl(symbols: List[List[BrailleSymbol]], dest_file: str):
+def braille_to_stl(symbols: List[List[BrailleSymbol]], dest_file: str, wrap_at: Optional[int]):
+    # https://stackoverflow.com/a/1915307/
+    # I could also use itertools' batched function, but it was
+    # added pretty recently (in Python 3.12, less than two years ago)
+    from itertools import islice
+
+    def split_every(n, iterable):
+        i = iter(iterable)
+        piece = list(islice(i, n))
+        while piece:
+            yield piece
+            piece = list(islice(i, n))
+    if wrap_at is not None:
+        new_symbols = []
+        for row in symbols:
+            new_symbols.extend(split_every(wrap_at, row))
+
+        symbols = new_symbols
+
     print("Generating mesh...")
 
     rows = len(symbols)

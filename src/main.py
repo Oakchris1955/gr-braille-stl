@@ -15,11 +15,12 @@ def main():
     )
     parser.add_argument('text', help="Το κείμενο που θέλετε να μεταφραστεί")
     parser.add_argument('dest', help="Η τοποθεσία του αρχείου εξόδου")
+    parser.add_argument('-w', '--wrap-at', help="Αλλαγή γραμμής στα τόσα σύμβολα", type=int)
 
     args = parser.parse_args()
 
     s = [text_to_braille(t) for t in args.text.split(("\n"))]
-    braille_to_stl(s, args.dest)
+    braille_to_stl(s, args.dest, args.wrap_at)
 
 if __name__ == "__main__":
     main()
